@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="85dp"
+    android:background="#cdc9c9	"
+    >
+    <ImageView
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:background="@drawable/logo3rd"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        />
+</RelativeLayout>

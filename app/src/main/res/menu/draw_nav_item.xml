@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/current"
+            android:icon="@drawable/icon_about_us"
+            android:title="@string/current"/>
+
+        <item
+            android:id="@+id/complete"
+            android:icon="@drawable/icon_complete"
+            android:title="@string/completed"/>
+
+        <!--<item-->
+            <!--android:id="@+id/hold"-->
+            <!--android:icon="@drawable/dump_icon"-->
+            <!--android:title="@string/dump"/>-->
+    </group>
+
+    <item android:title="@string/other">
+        <menu>
+            <item
+                android:id="@+id/share"
+                android:icon="@drawable/share_icon"
+                android:title="@string/share"/>
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/log_out"
+                android:title="@string/logout"/>
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/icon_about_us"
+                android:title="@string/about_us"/>
+        </menu>
+    </item>
+
+</menu>
