@@ -43,4 +43,8 @@
         app:headerLayout="@layout/nav_drawer_header"
         app:menu="@menu/draw_nav_item"
         />
+<<<<<<< HEAD
 </androidx.drawerlayout.widget.DrawerLayout>
+=======
+</androidx.drawerlayout.widget.DrawerLayout>
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3

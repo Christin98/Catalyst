@@ -5,23 +5,37 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/current"
+<<<<<<< HEAD
             android:icon="@drawable/icon_about_us"
             android:title="@string/current"/>
+=======
+            android:icon="@drawable/icon_current"
+            android:title="@string/running_project"/>
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
 
         <item
             android:id="@+id/complete"
             android:icon="@drawable/icon_complete"
+<<<<<<< HEAD
             android:title="@string/completed"/>
 
         <!--<item-->
             <!--android:id="@+id/hold"-->
             <!--android:icon="@drawable/dump_icon"-->
+=======
+            android:title="@string/submitted_project"/>
+
+        <!--<item-->
+            <!--android:id="@+id/hold"-->
+            <!--android:icon="@drawable/icon_dump"-->
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
             <!--android:title="@string/dump"/>-->
     </group>
 
     <item android:title="@string/other">
         <menu>
             <item
+<<<<<<< HEAD
                 android:id="@+id/share"
                 android:icon="@drawable/share_icon"
                 android:title="@string/share"/>
@@ -33,6 +47,19 @@
                 android:id="@+id/about"
                 android:icon="@drawable/icon_about_us"
                 android:title="@string/about_us"/>
+=======
+                android:id="@+id/settings"
+                android:icon="@drawable/icon_settings"
+                android:title="@string/settings"/>
+            <item
+                android:id="@+id/share"
+                android:icon="@drawable/icon_share"
+                android:title="@string/share"/>
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/icon_logout"
+                android:title="@string/logout"/>
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
         </menu>
     </item>
 

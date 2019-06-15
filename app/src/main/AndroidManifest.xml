@@ -7,11 +7,16 @@
     <dist:module dist:instant="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+<<<<<<< HEAD
+=======
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
+<<<<<<< HEAD
         android:roundIcon="@drawable/logo3rd"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -19,11 +24,37 @@
         <activity android:name=".Activity.TaskDetailsActivity"
             android:label="Details"
             android:theme="@style/Theme.AppCompat.Light.Dialog"/>
+=======
+        android:roundIcon="@drawable/logo"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <receiver
+            android:name=".Service.NetworkChangeReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="NetworkChangeRecevier">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".Activity.TaskDetailsActivity"
+            android:label="Details"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            tools:ignore="InnerclassSeparator" />
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
         <activity android:name=".Activity.TaskScreenActivity" />
         <activity
             android:name=".Activity.LoginActivity"
             android:label="@string/title_activity_login"
+<<<<<<< HEAD
             android:theme="@style/AppTheme"/>
+=======
+            android:theme="@style/AppTheme" />
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Fullscreen">

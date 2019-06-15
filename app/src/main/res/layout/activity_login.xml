@@ -50,8 +50,13 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
                 android:padding="8dp"
+<<<<<<< HEAD
                 android:text="𝐋 𝐎 𝐆 𝐈 𝐍"
                 android:textColor="@color/colorAccent"
+=======
+                android:text="@string/login_top"
+                android:textColor="@color/grey"
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -66,13 +71,18 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 app:cardCornerRadius="8dp"
+<<<<<<< HEAD
                 app:cardElevation="8dp"
                 android:background="@color/colorAccent">
+=======
+                app:cardElevation="8dp">
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
 
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+<<<<<<< HEAD
                     android:background="@color/colorAccent">
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -81,6 +91,11 @@
                     android:padding="16dp"
                     android:layout_margin="8dp"
                     android:background="@color/white">
+=======
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:paddingTop="8dp">
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/loginTextInputLayoutuser"
@@ -120,7 +135,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_margin="16dp"
+<<<<<<< HEAD
                         app:cardBackgroundColor="@color/white"
+=======
+                        app:cardBackgroundColor="@color/colorAccent"
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
                         app:cardCornerRadius="24dp"
                         app:cardElevation="8dp">
 
@@ -129,7 +148,11 @@
                             style="@style/Widget.MaterialComponents.Button"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+<<<<<<< HEAD
                             android:background="@color/colorAccent"
+=======
+                            android:background="@drawable/ripple_white"
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
                             android:ems="15"
                             android:text="@string/login"
                             android:textAllCaps="true"
@@ -141,12 +164,19 @@
 
                 </LinearLayout>
 
+<<<<<<< HEAD
                 </LinearLayout>
 
+=======
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
     </ScrollView>
 
+<<<<<<< HEAD
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+=======
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3

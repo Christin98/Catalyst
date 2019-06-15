@@ -1,23 +1,14 @@
 package com.thecatalyst.catalyst.Model;
-<<<<<<< HEAD
-=======
 
->>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Technology {
+import java.util.List;
 
-<<<<<<< HEAD
+public class Tmember {
     @SerializedName("tMember")
     @Expose
     private List<Object> tMember = null;
-=======
-    @SerializedName("tech")
-    @Expose
-    private List<Object> tech = null;
->>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
     @SerializedName("createdAt")
     @Expose
     private Integer createdAt;
@@ -30,10 +21,12 @@ public class Technology {
     @SerializedName("projectId")
     @Expose
     private Integer projectId;
-<<<<<<< HEAD
     @SerializedName("teamMember")
     @Expose
     private String teamMember;
+    @SerializedName("finished")
+    @Expose
+    private Integer finished;
 
     public List<Object> getTMember() {
         return tMember;
@@ -41,18 +34,6 @@ public class Technology {
 
     public void setTMember(List<Object> tMember) {
         this.tMember = tMember;
-=======
-    @SerializedName("technology")
-    @Expose
-    private String technology;
-
-    public List<Object> getTech() {
-        return tech;
-    }
-
-    public void setTech(List<Object> tech) {
-        this.tech = tech;
->>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
     }
 
     public Integer getCreatedAt() {
@@ -87,21 +68,20 @@ public class Technology {
         this.projectId = projectId;
     }
 
-<<<<<<< HEAD
     public String getTeamMember() {
         return teamMember;
     }
 
     public void setTeamMember(String teamMember) {
         this.teamMember = teamMember;
-=======
-    public String getTechnology() {
-        return technology;
     }
 
-    public void setTechnology(String technology) {
-        this.technology = technology;
->>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
+    public Integer getFinished() {
+        return finished;
+    }
+
+    public void setFinished(Integer finished) {
+        this.finished = finished;
     }
 
 }

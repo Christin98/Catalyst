@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+<<<<<<< HEAD
     android:layout_height="85dp"
     android:background="#cdc9c9	"
     >
@@ -11,4 +12,34 @@
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         />
+=======
+    android:layout_height="200dp">
+
+    <ImageView
+        android:id="@+id/image_logo_hed"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/logo" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|center_vertical"
+        android:orientation="vertical"
+        android:layout_toEndOf="@+id/image_logo_hed">
+    <TextView
+        android:id="@+id/hi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center|center_vertical"
+        android:text="@string/hi"
+        android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/usertv_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="      "/>
+</LinearLayout>
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
 </RelativeLayout>

@@ -8,10 +8,13 @@
     <color name="grey">#828080</color>
     <color name="blue">#483d8b</color>
     <color name="placeholder_bg">#dddddd</color>
+<<<<<<< HEAD
     <color name="black">#000000</color>
     <color name="sky">#00bfff</color>
     <color name="pink">#ff69b4</color>
     <!--<color name="blue_light">#0000ff</color>-->
     <color name="red">#ff0000</color>
     <color name="dark_green">#006400</color>
+=======
+>>>>>>> 1124fdd3ee1e5e3ccfd2f4049ec6cd750c80d1a3
 </resources>
