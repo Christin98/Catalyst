@@ -144,6 +144,13 @@
             android:layout_marginStart="2dp"
             android:lines="1"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_child1"
+            android:layout_margin="5dp"
+            android:padding="2dp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

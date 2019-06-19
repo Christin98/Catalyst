@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,9 +25,8 @@ import com.thecatalyst.catalyst.Network.NetworkUtil;
 import com.thecatalyst.catalyst.Network.RetrofitClient;
 import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
-import com.thecatalyst.catalyst.Service.NetworkChangeReceiver;
 
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,8 +38,10 @@ import retrofit2.Response;
 
 public class CompletedFragment extends Fragment {
 
+    @Nullable
     @BindView(R.id.recycler_child)
     RecyclerView recyclerViewchild;
+    @Nullable
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
     private int index;
@@ -47,7 +49,7 @@ public class CompletedFragment extends Fragment {
     private RecyclerView myRecyclerView;
     private ShimmerFrameLayout shimmerFrameLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
-    int completec = 0;
+    final private int completec = 0;
 
 
     public CompletedFragment() {
@@ -84,6 +86,7 @@ public class CompletedFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
+                assert response.body() != null;
                 loadDataList(response.body().getData());
                 index = getId();
                 Log.e("TAG", "onResponse: "+index );
@@ -111,7 +114,7 @@ public class CompletedFragment extends Fragment {
     }
 
     private void showImage() {
-        String status =   NetworkUtil.getConnectivityStatusString(getContext());
+        String status =   NetworkUtil.getConnectivityStatusString(getActivity());
         Log.e("TAG", "showImage: "+status );
         if (status.equals("Wifi enabled") || status.equals("Mobile data enabled")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -144,6 +147,15 @@ public class CompletedFragment extends Fragment {
 
         MyAdapter myAdapter = new MyAdapter(usersList,getActivity());
 
+        Collections.sort(usersList, (o1, o2) -> {
+            if (o1.getId() > o2.getId()){
+                return -1;
+            }else if (o1.getId().equals(o2.getId())){
+                return 0;
+            }else {
+                return 1;
+            }
+        });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         myRecyclerView.setLayoutManager(layoutManager);
         myRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), LinearLayoutManager.VERTICAL));
@@ -151,6 +163,8 @@ public class CompletedFragment extends Fragment {
         myAdapter.notifyDataSetChanged();
 
     }
+
+
 
     private void loadRefreshData()
     {
@@ -162,6 +176,7 @@ public class CompletedFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
+                assert response.body() != null;
                 loadDataList(response.body().getData());
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);

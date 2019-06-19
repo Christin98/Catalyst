@@ -209,14 +209,16 @@
         android:orientation="horizontal"
         android:background="#000000">
     </LinearLayout>
-<CalendarView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <com.molo17.customizablecalendar.library.components.CustomizableCalendar
+        android:id="@+id/view_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout="@layout/c_calender" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

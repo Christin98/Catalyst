@@ -115,11 +115,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.CustomViewHolder>{
 
         Log.e("TAG", "DATA LIST ADAPTER: "+dataList.toString() );
 
-//        MyAdapter2 adapter = new MyAdapter2(data.get(position).getTask(),context);
+        MyAdapter2 adapter = new MyAdapter2(dataList.get(position).getChildren(),context);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         holder.recycler_child.setLayoutManager(layoutManager);
-//        holder.recycler_child.setAdapter(adapter);
+        holder.recycler_child.setAdapter(adapter);
         holder.arrow.setOnClickListener(v -> {
                     Intent intent = new Intent(context,TaskDetailsActivity.class);
             intent.putExtra("Name",dataList.get(position).getName());
@@ -128,6 +128,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.CustomViewHolder>{
             intent.putExtra("Rem",MessageFormat.format("{0}days",Days.daysBetween(datel,date).getDays()));
             intent.putExtra("Details",dataList.get(position).getDetails());
             intent.putExtra("Index", position);
+            intent.putExtra("Members",dataList.get(position).getAllTeamMembers());
+            intent.putExtra("Technology",dataList.get(position).getAllTechnology());
             context.startActivity(intent);
                 }
         );
@@ -137,11 +139,10 @@ int currentColor = Color.argb(, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(
 holder.colorView.setBackgroundColor(Color.parseColor("#000000"));
 */
 
-//
-//        adapter.notifyDataSetChanged();
-//        holder.recycler_child.setVisibility(View.GONE);
-//
-//        holder.cardView.setOnClickListener(v -> holder.recycler_child.setVisibility(View.VISIBLE));
+        adapter.notifyDataSetChanged();
+        holder.recycler_child.setVisibility(View.VISIBLE);
+
+        holder.cardView.setOnClickListener(v -> holder.recycler_child.setVisibility(View.VISIBLE));
     }
 
 

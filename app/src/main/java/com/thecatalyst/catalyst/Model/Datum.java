@@ -3,6 +3,8 @@ package com.thecatalyst.catalyst.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Datum {
 //    @SerializedName("createdAt")
 //    @Expose
@@ -55,6 +57,9 @@ public class Datum {
     @SerializedName("allTechnology")
     @Expose
     private String allTechnology;
+    @SerializedName("children")
+    @Expose
+    private List<Child> children = null;
 
 //    public Integer getCreatedAt() {
 //        return createdAt;
@@ -190,6 +195,13 @@ public class Datum {
 
     public void setAllTechnology(String allTechnology) {
         this.allTechnology = allTechnology;
+    }
+    public List<Child> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Child> children) {
+        this.children = children;
     }
 
 }

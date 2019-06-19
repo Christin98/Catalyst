@@ -73,5 +73,8 @@
     <string name="if_you_have_completed_this_project_then_submit_by_clicking_below_button">If you have completed this project, then submit by clicking below button</string>
     <string name="running_project">Running Project</string>
     <string name="submitted_project">Submitted Project</string>
+    <string name="day_month_year">day month year</string>
+    <string name="first_day_selected">First day selected</string>
+    <string name="last_day_selected">Last day selected</string>
 
 </resources>

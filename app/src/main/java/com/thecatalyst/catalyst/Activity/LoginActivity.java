@@ -1,24 +1,17 @@
 package com.thecatalyst.catalyst.Activity;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -27,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.thecatalyst.catalyst.Model.Login;
@@ -35,7 +27,6 @@ import com.thecatalyst.catalyst.Network.RetrofitClient;
 import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
 
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,12 +39,6 @@ public class LoginActivity extends AppCompatActivity {
     TextView login_title;
     ImageView logo;
     CardView login_card;
-    public static int TYPE_WIFI = 1;
-    public static int TYPE_MOBILE = 2;
-    public static int TYPE_NOT_CONNECTED = 0;
-    private Snackbar snackbar;
-    private CoordinatorLayout coordinatorLayout;
-    private boolean internetConnected=true;
     SharedPreferences sp;
 
     @Override
@@ -62,12 +47,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         sp = getSharedPreferences("login",MODE_PRIVATE);
 
+
         Handler h = new Handler();
 
         email = findViewById(R.id.login_username);
         email_text = findViewById(R.id.loginTextInputLayoutuser);
         password = findViewById(R.id.login_password);
-        coordinatorLayout = findViewById(R.id.loginlayout);
         password_text = findViewById(R.id.loginTextInputLayoutpass);
         logo = findViewById(R.id.logo);
         login_title = findViewById(R.id.login_text);
@@ -125,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void doLogin(final String user,final String pass){
+        Log.e("TAG", "CLICKED: " );
 
         GetData service = RetrofitClient.getRetrofitInstance().create(GetData.class);
 
@@ -156,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<Login> call, @NonNull Throwable t) {
-
+                Log.e("TAG", "onFailure: "+t );
             }
         });
 

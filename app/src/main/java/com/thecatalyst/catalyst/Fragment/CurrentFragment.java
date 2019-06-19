@@ -30,6 +30,15 @@ import java.util.Objects;
 import java.util.zip.DataFormatException;
 
 import butterknife.BindView;
+import in.srain.cube.image.CubeImageView;
+import in.srain.cube.image.ImageLoader;
+import in.srain.cube.image.ImageLoaderFactory;
+import in.srain.cube.util.LocalDisplay;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
+import in.srain.cube.views.ptr.PtrUIHandler;
+import in.srain.cube.views.ptr.header.StoreHouseHeader;
+import in.srain.cube.views.ptr.indicator.PtrIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,8 +54,8 @@ public class CurrentFragment extends Fragment {
 
     private RecyclerView myRecyclerView;
     private ShimmerFrameLayout shimmerFrameLayout;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private int completedrunning = 0;
+    private final String[] mStringList = {"CATALYST", "LOADING"};
 
 
     public CurrentFragment() {
@@ -65,12 +74,71 @@ public class CurrentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         myRecyclerView = view.findViewById(R.id.recycler);
-        swipeRefreshLayout =  view.findViewById(R.id.swipe);
-        swipeRefreshLayout.setOnRefreshListener(this::loadRefreshData);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+//        swipeRefreshLayout =  view.findViewById(R.id.swipe);
+//        swipeRefreshLayout.setOnRefreshListener(this::loadRefreshData);
+//        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+//                android.R.color.holo_green_light,
+//                android.R.color.holo_orange_light,
+//                android.R.color.holo_red_light);
+        final PtrFrameLayout frame = view.findViewById(R.id.store_house_ptr_frame);
+
+        final StoreHouseHeader header = new StoreHouseHeader(getContext());
+        header.setPadding(0, LocalDisplay.dp2px(15), 0, 0);
+
+        header.initWithString(mStringList[0]);
+//        setHeaderTitle(mTitlePre + mStringList[0]);
+
+        // for changing string
+        frame.addPtrUIHandler(new PtrUIHandler() {
+
+            private int mLoadTime = 0;
+
+            @Override
+            public void onUIReset(PtrFrameLayout frame) {
+                mLoadTime++;
+                String string = mStringList[mLoadTime % mStringList.length];
+                header.initWithString(string);
+            }
+
+            @Override
+            public void onUIRefreshPrepare(PtrFrameLayout frame) {
+                String string = mStringList[mLoadTime % mStringList.length];
+//                setHeaderTitle(mTitlePre + string);
+            }
+
+            @Override
+            public void onUIRefreshBegin(PtrFrameLayout frame) {
+
+            }
+
+            @Override
+            public void onUIRefreshComplete(PtrFrameLayout frame) {
+
+            }
+
+            @Override
+            public void onUIPositionChange(PtrFrameLayout frame, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator) {
+
+            }
+        });
+
+        frame.setDurationToCloseHeader(3000);
+        frame.setHeaderView(header);
+        frame.addPtrUIHandler(header);
+        frame.postDelayed(() -> frame.autoRefresh(false), 100);
+
+        frame.setPtrHandler(new PtrHandler() {
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return true;
+            }
+
+            @Override
+            public void onRefreshBegin(final PtrFrameLayout frame) {
+                frame.postDelayed(frame::refreshComplete, 2000);
+                loadRefreshData();
+            }
+        });
 
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view);
         shimmerFrameLayout.startShimmerAnimation();
@@ -83,6 +151,7 @@ public class CurrentFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
+                assert response.body() != null;
                 loadDataList(response.body().getData());
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
@@ -105,8 +174,16 @@ public class CurrentFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
+        //        CubeImageView imageView = view.findViewById(R.id.store_house_ptr_image);
+//        ImageLoader imageLoader = ImageLoaderFactory.create(getContext());
+//        String pic = "http://img5.duitang.com/uploads/item/201406/28/20140628122218_fLQyP.thumb.jpeg";
+//        imageView.loadImage(imageLoader, pic);
+
+
         return inflater.inflate(R.layout.fragment_current, container, false);
     }
+
 
     private void showImage() {
         String status =   NetworkUtil.getConnectivityStatusString(getContext());
@@ -144,7 +221,7 @@ public class CurrentFragment extends Fragment {
         MyAdapter myAdapter = new MyAdapter(usersList, getActivity());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         myRecyclerView.setLayoutManager(layoutManager);
-        myRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), LinearLayoutManager.VERTICAL));
+//        myRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), LinearLayoutManager.VERTICAL));
         myRecyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
 
@@ -160,15 +237,14 @@ public class CurrentFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
+                assert response.body() != null;
                 loadDataList(response.body().getData());
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(@NonNull Call<RetroUsers> call, @NonNull Throwable throwable) {
-                swipeRefreshLayout.setRefreshing(false);
                 Log.e("TAG", "onFailure: "+ throwable.getMessage() );
                 showImage();
                 if (getActivity() != null) {
