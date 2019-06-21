@@ -48,7 +48,6 @@ public class CompletedFragment extends Fragment {
 
     private RecyclerView myRecyclerView;
     private ShimmerFrameLayout shimmerFrameLayout;
-    private SwipeRefreshLayout swipeRefreshLayout;
     final private int completec = 0;
 
 
@@ -68,13 +67,6 @@ public class CompletedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         myRecyclerView = view.findViewById(R.id.recycler);
-        swipeRefreshLayout =  view.findViewById(R.id.swipe);
-        swipeRefreshLayout.setOnRefreshListener(this::loadRefreshData);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view);
         shimmerFrameLayout.startShimmerAnimation();
 
@@ -180,12 +172,10 @@ public class CompletedFragment extends Fragment {
                 loadDataList(response.body().getData());
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(@NonNull Call<RetroUsers> call, @NonNull Throwable throwable) {
-                swipeRefreshLayout.setRefreshing(false);
                 showImage();
                 Log.e("TAG", "onFailure: "+throwable.getMessage() );
                 if (getActivity() != null) {

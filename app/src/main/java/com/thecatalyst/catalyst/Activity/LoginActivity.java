@@ -3,6 +3,9 @@ package com.thecatalyst.catalyst.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -11,11 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +31,7 @@ import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
 
 
+import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,14 +44,19 @@ public class LoginActivity extends AppCompatActivity {
     ImageView logo;
     CardView login_card;
     SharedPreferences sp;
+    CircularProgressButton lgn;
+    MediaPlayer login_tap;
+    MediaPlayer login_done;
+    Vibrator vibrator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sp = getSharedPreferences("login",MODE_PRIVATE);
-
-
+        login_tap = MediaPlayer.create(this,R.raw.space);
+        login_done = MediaPlayer.create(this,R.raw.login_success);
+        vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
         Handler h = new Handler();
 
         email = findViewById(R.id.login_username);
@@ -55,9 +64,10 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.login_password);
         password_text = findViewById(R.id.loginTextInputLayoutpass);
         logo = findViewById(R.id.logo);
+        login_card = findViewById(R.id.card_login);
         login_title = findViewById(R.id.login_text);
-        login_card = findViewById(R.id.login_card);
-        Button lgn = findViewById(R.id.login_button);
+        lgn = findViewById(R.id.progressbtn);
+//        lgn.setMyButtonClickListener(this);
 
         h.postDelayed(() -> {
             email.setFocusable(true);
@@ -88,22 +98,28 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         lgn.setOnClickListener(v -> {
+
             String user = email.getText().toString();
             String passw = password.getText().toString();
+            login_tap.start();
             if (validateLogin(user,passw)){
-                doLogin(user,passw);
-
+                lgn.startAnimation();
+                lgn.postDelayed(() -> doLogin(user, passw),2000);
+                email.setEnabled(false);
+                password.setEnabled(false);
             }
         });
     }
 
-    private boolean validateLogin(String username, String password){
+    private boolean validateLogin(String username, String passwor){
         if(username == null || username.trim().length() == 0){
             Toast.makeText(this, "Username is required", Toast.LENGTH_SHORT).show();
+            email.setError("Username is required" ,getResources().getDrawable(R.drawable.icon_error));
             return false;
         }
-        if(password == null || password.trim().length() == 0){
+        if(passwor == null || passwor.trim().length() == 0){
             Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
+            password.setError("Password is required",getResources().getDrawable(R.drawable.icon_error));
             return false;
         }
         return true;
@@ -126,15 +142,26 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e("TAG", "onResponseStaus:"+status);
                 Log.e("TAG", "onResponseStaus:"+message);
                 if (status.equals("success") || message.equals("logged in!")){
-
-                        Intent intent = new Intent(LoginActivity.this,TaskScreenActivity.class);
-                        startActivity(intent);
+                    lgn.doneLoadingAnimation(Color.parseColor("#009900"),BitmapFactory.decodeResource(getResources(),R.drawable.ic_ok_48));
+                            toNextPage();
+                            login_done.start();
+                            Handler handler = new Handler();
+                       handler.postDelayed(() -> {
+                           Intent intent = new Intent(LoginActivity.this,TaskScreenActivity.class);
+                           startActivity(intent);
+                       },1000);
                     sp.edit().putBoolean("logged",true).apply();
                     sp.edit().putString("Username",user).apply();
                     sp.edit().putString("Password",pass).apply();
                     finish();
                 }else if (status.equals("error") || message.equals("incorrect password")){
+                    vibrator.vibrate((long)500);
                     password.setError(message,getResources().getDrawable(R.drawable.icon_error));
+                    Handler handler = new Handler();
+                    lgn.doneLoadingAnimation(Color.parseColor("#ff0000"), BitmapFactory.decodeResource(getResources(),R.drawable.ic_cancel_48));
+                    handler.postDelayed(() -> lgn.revertAnimation(),1000);
+                    email.setEnabled(true);
+                    password.setEnabled(true);
                     sp.edit().putBoolean("logged",false).apply();
                 }
 
@@ -142,12 +169,19 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<Login> call, @NonNull Throwable t) {
+                lgn.doneLoadingAnimation(Color.parseColor("#ff0000"), BitmapFactory.decodeResource(getResources(),R.drawable.ic_cancel_48));
+                Handler handler = new Handler();
+                handler.postDelayed(() -> lgn.revertAnimation(),1000);
+                email.setEnabled(true);
+                password.setEnabled(true);
                 Log.e("TAG", "onFailure: "+t );
             }
         });
+    }
 
+    public void toNextPage(){
 
-            }
+    }
 
 
     @Override

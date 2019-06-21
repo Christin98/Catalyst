@@ -5,40 +5,6 @@
     android:layout_height="match_parent"
     xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.CurrentFragment">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:background="#333333">
-
-        <in.srain.cube.views.ptr.PtrFrameLayout
-            android:id="@+id/store_house_ptr_frame"
-            xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            cube_ptr:ptr_duration_to_close="300"
-            cube_ptr:ptr_duration_to_close_header="2000"
-            cube_ptr:ptr_keep_header_when_refresh="true"
-            cube_ptr:ptr_pull_to_fresh="true"
-            cube_ptr:ptr_ratio_of_header_height_to_refresh="1.2"
-            cube_ptr:ptr_resistance="1.7">
-
-            <LinearLayout
-                android:id="@+id/store_house_ptr_image_content"
-                android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
-                android:background="#333333"
-                android:clickable="true"
-                android:padding="10dp"
-                android:focusable="true">
-
-                <in.srain.cube.image.CubeImageView
-                    android:id="@+id/store_house_ptr_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="?actionBarSize" />
-            </LinearLayout>
-
-        </in.srain.cube.views.ptr.PtrFrameLayout>
-    </LinearLayout>
 
     <LinearLayout
     android:layout_width="match_parent"
@@ -64,19 +30,17 @@ shimmer:duration="2000">
 
 </LinearLayout>
 </com.facebook.shimmer.ShimmerFrameLayout>
-
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:id="@+id/swipe">
-
+        <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/swipe">
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/recycler"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
 </androidx.recyclerview.widget.RecyclerView>
+        </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    </LinearLayout>
+</LinearLayout>
 </FrameLayout>

@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,6 +24,7 @@ import com.molo17.customizablecalendar.library.components.CustomizableCalendar;
 import com.molo17.customizablecalendar.library.interactors.AUCalendar;
 import com.molo17.customizablecalendar.library.model.Calendar;
 import com.thecatalyst.catalyst.Adapter.CalendarViewInteractor;
+import com.thecatalyst.catalyst.Interpolator.MyBounceInterpolator;
 import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
 
@@ -89,7 +92,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
 
 
 
-        button.setOnClickListener(v -> builder = new AlertDialog.Builder(TaskDetailsActivity.this)
+        button.setOnClickListener(v -> { builder = new AlertDialog.Builder(TaskDetailsActivity.this)
                 .setCancelable(false)
                 .setMessage("Are You sure?")
                 .setTitle("Submit Project")
@@ -98,7 +101,11 @@ public class TaskDetailsActivity extends AppCompatActivity {
                     Toast.makeText(TaskDetailsActivity.this,"Submitted",Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("No", (dialog, which) -> dialog.cancel())
-        .show());
+        .show();
+        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.bounce);
+        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.2, 20);
+        myAnim.setInterpolator(interpolator);
+        button.startAnimation(myAnim);});
 
 
         tech = new ArrayList<>();

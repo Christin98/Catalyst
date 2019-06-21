@@ -2,7 +2,6 @@ package com.thecatalyst.catalyst.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -13,13 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thecatalyst.catalyst.Activity.TaskDetailsActivity;
 import com.thecatalyst.catalyst.Model.Child;
 import com.thecatalyst.catalyst.R;
-import com.thecatalyst.catalyst.Model.Task;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;

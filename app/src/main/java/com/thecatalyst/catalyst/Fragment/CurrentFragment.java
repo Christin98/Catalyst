@@ -26,19 +26,9 @@ import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.zip.DataFormatException;
 
 import butterknife.BindView;
-import in.srain.cube.image.CubeImageView;
-import in.srain.cube.image.ImageLoader;
-import in.srain.cube.image.ImageLoaderFactory;
-import in.srain.cube.util.LocalDisplay;
-import in.srain.cube.views.ptr.PtrFrameLayout;
-import in.srain.cube.views.ptr.PtrHandler;
-import in.srain.cube.views.ptr.PtrUIHandler;
-import in.srain.cube.views.ptr.header.StoreHouseHeader;
-import in.srain.cube.views.ptr.indicator.PtrIndicator;
+import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -55,6 +45,7 @@ public class CurrentFragment extends Fragment {
     private RecyclerView myRecyclerView;
     private ShimmerFrameLayout shimmerFrameLayout;
     private int completedrunning = 0;
+    private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private final String[] mStringList = {"CATALYST", "LOADING"};
 
 
@@ -80,65 +71,9 @@ public class CurrentFragment extends Fragment {
 //                android.R.color.holo_green_light,
 //                android.R.color.holo_orange_light,
 //                android.R.color.holo_red_light);
-        final PtrFrameLayout frame = view.findViewById(R.id.store_house_ptr_frame);
-
-        final StoreHouseHeader header = new StoreHouseHeader(getContext());
-        header.setPadding(0, LocalDisplay.dp2px(15), 0, 0);
-
-        header.initWithString(mStringList[0]);
-//        setHeaderTitle(mTitlePre + mStringList[0]);
-
-        // for changing string
-        frame.addPtrUIHandler(new PtrUIHandler() {
-
-            private int mLoadTime = 0;
-
-            @Override
-            public void onUIReset(PtrFrameLayout frame) {
-                mLoadTime++;
-                String string = mStringList[mLoadTime % mStringList.length];
-                header.initWithString(string);
-            }
-
-            @Override
-            public void onUIRefreshPrepare(PtrFrameLayout frame) {
-                String string = mStringList[mLoadTime % mStringList.length];
-//                setHeaderTitle(mTitlePre + string);
-            }
-
-            @Override
-            public void onUIRefreshBegin(PtrFrameLayout frame) {
-
-            }
-
-            @Override
-            public void onUIRefreshComplete(PtrFrameLayout frame) {
-
-            }
-
-            @Override
-            public void onUIPositionChange(PtrFrameLayout frame, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator) {
-
-            }
-        });
-
-        frame.setDurationToCloseHeader(3000);
-        frame.setHeaderView(header);
-        frame.addPtrUIHandler(header);
-        frame.postDelayed(() -> frame.autoRefresh(false), 100);
-
-        frame.setPtrHandler(new PtrHandler() {
-            @Override
-            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return true;
-            }
-
-            @Override
-            public void onRefreshBegin(final PtrFrameLayout frame) {
-                frame.postDelayed(frame::refreshComplete, 2000);
-                loadRefreshData();
-            }
-        });
+        mWaveSwipeRefreshLayout = view.findViewById(R.id.swipe);
+        mWaveSwipeRefreshLayout.setOnRefreshListener(this::loadRefreshData);
+       mWaveSwipeRefreshLayout.setWaveRGBColor(109,0,148);
 
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view);
         shimmerFrameLayout.startShimmerAnimation();
@@ -173,14 +108,6 @@ public class CurrentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-        //        CubeImageView imageView = view.findViewById(R.id.store_house_ptr_image);
-//        ImageLoader imageLoader = ImageLoaderFactory.create(getContext());
-//        String pic = "http://img5.duitang.com/uploads/item/201406/28/20140628122218_fLQyP.thumb.jpeg";
-//        imageView.loadImage(imageLoader, pic);
-
-
         return inflater.inflate(R.layout.fragment_current, container, false);
     }
 
@@ -241,11 +168,13 @@ public class CurrentFragment extends Fragment {
                 loadDataList(response.body().getData());
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
+                mWaveSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(@NonNull Call<RetroUsers> call, @NonNull Throwable throwable) {
                 Log.e("TAG", "onFailure: "+ throwable.getMessage() );
+                mWaveSwipeRefreshLayout.setRefreshing(false);
                 showImage();
                 if (getActivity() != null) {
                     Toast.makeText(getContext(), "Unable to load data", Toast.LENGTH_SHORT).show();
