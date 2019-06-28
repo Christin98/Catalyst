@@ -76,5 +76,7 @@
     <string name="day_month_year">day month year</string>
     <string name="first_day_selected">First day selected</string>
     <string name="last_day_selected">Last day selected</string>
+    <string name="submit">Submit</string>
+    <string name="write_a_message">Write a message</string>
 
 </resources>

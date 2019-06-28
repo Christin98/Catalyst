@@ -31,7 +31,6 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.CustomViewHolder>{
     private List<Datum> dataList;
@@ -41,8 +40,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.CustomViewHolder>{
     private DateTimeFormatter format = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss zx:x yyyy");
     private LocalDate datel = org.joda.time.LocalDate.parse(dateFormat, format);
 
-
-    //    private boolean fabstate = false;
     private Context context;
 
     public MyAdapter(List<Datum> dataList,Context context){

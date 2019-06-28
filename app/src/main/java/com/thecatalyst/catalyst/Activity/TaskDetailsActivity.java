@@ -52,12 +52,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_details);
-        TextView pro_name = findViewById(R.id.project_name);
+//        TextView pro_name = findViewById(R.id.project_name);
         TextView startd = findViewById(R.id.startd);
         TextView endd = findViewById(R.id.endd);
         TextView remday = findViewById(R.id.remd);
         TextView detail = findViewById(R.id.detailtv);
-        LinearLayout task_project = findViewById(R.id.task_lay_project);
+//        LinearLayout task_project = findViewById(R.id.task_lay_project);
         LinearLayout task_date = findViewById(R.id.task_lay_date);
         LinearLayout task_mem = findViewById(R.id.task_lay_mem);
         LinearLayout task_details = findViewById(R.id.task_lay_details);
@@ -161,7 +161,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         });
 
 
-        pro_name.setText(name);
+//        pro_name.setText(name);
         startd.setText(startdt);
         endd.setText(enddt);
         remday.setText(remdy);

@@ -2,6 +2,8 @@ package com.thecatalyst.catalyst.Activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.Fragment;
@@ -10,16 +12,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+import com.thecatalyst.catalyst.Adapter.ViewPagerAdapter;
+import com.thecatalyst.catalyst.Fragment.ChatFragment;
 import com.thecatalyst.catalyst.Fragment.CompletedFragment;
 import com.thecatalyst.catalyst.Fragment.CurrentFragment;
 import com.thecatalyst.catalyst.R;
@@ -34,11 +42,15 @@ public class TaskScreenActivity extends AppCompatActivity {
     @BindView(R.id.recycler_child)
     RecyclerView recyclerViewchild;
     @BindView(R.id.recycler)
-    Toolbar toolbar;
+    CollapsingToolbarLayout collapsing_toolbar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
+    ViewPager viewPager;
+    Toolbar toolbar;
+    TabLayout tabLayout;
     View view;
+    private String[] pageTitle = {"Current", "Submitted", "Chat"};
     SharedPreferences sharedPreferences;
 
     @Override
@@ -49,6 +61,9 @@ public class TaskScreenActivity extends AppCompatActivity {
 
         drawerLayout =  findViewById(R.id.drawer_layout);
         navigationView =findViewById(R.id.navigation_view);
+        collapsing_toolbar = findViewById(R.id.collapsing_toolbar);
+        viewPager = findViewById(R.id.view_pager);
+        tabLayout = findViewById(R.id.tab_layout);
         toolbar = findViewById(R.id.toolbar);
         view = navigationView.getHeaderView(0);
         TextView usern = view.findViewById(R.id.usertv_head);
@@ -62,34 +77,52 @@ public class TaskScreenActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         usern.setText(user);
-        loadFragment(new CurrentFragment());
-        getSupportActionBar().setTitle("Current Projects");
+        tabLayout.addTab(tabLayout.newTab().setText(pageTitle[0]));
+        tabLayout.addTab(tabLayout.newTab().setText(pageTitle[1]));
+        tabLayout.addTab(tabLayout.newTab().setText(pageTitle[2]));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+//        loadFragment(new CurrentFragment());
+////        getSupportActionBar().setTitle("Current Projects");
 
+        assert navigationView != null;
         navigationView.setCheckedItem(R.id.current);
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setOffscreenPageLimit(3);
+        viewPager.setAdapter(viewPagerAdapter);
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+        tabLayout.setSelectedTabIndicatorGravity(TabLayout.INDICATOR_GRAVITY_BOTTOM);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
 
             switch (menuItem.getItemId()){
                 case R.id.current:
-                    loadFragment(new CurrentFragment());
-                    getSupportActionBar().setTitle("Current Projects");
-                    menuItem.setChecked(true);
-                    drawerLayout.closeDrawers();
+                    viewPager.setCurrentItem(0);
                     return true;
 
                 case R.id.complete:
-                    loadFragment(new CompletedFragment());
-                    getSupportActionBar().setTitle("Completed Projects");
-                    menuItem.setChecked(true);
-                    drawerLayout.closeDrawers();
+                    viewPager.setCurrentItem(1);
                     return true;
-
-//                case R.id.hold:
-//                    loadFragment(new HoldFragment());
-//                    getSupportActionBar().setTitle("Dumped Projects");
-//                    menuItem.setChecked(true);
-//                    drawerLayout.closeDrawers();
-//                    return true;
 
                 case R.id.logout:
                     sharedPreferences.edit().putBoolean("logged",false).apply();
@@ -111,12 +144,19 @@ public class TaskScreenActivity extends AppCompatActivity {
         });
     }
 
-    private void loadFragment(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main_container,fragment);
-        Log.e("TAG", "TRANSACTION: "+fragment );
-        transaction.commit();
+
+
+    @Override
+    public void onBackPressed() {
+        assert drawerLayout != null;
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
+
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {

@@ -21,7 +21,6 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.thecatalyst.catalyst.Adapter.MyAdapter;
 import com.thecatalyst.catalyst.Model.Datum;
 import com.thecatalyst.catalyst.Model.RetroUsers;
-import com.thecatalyst.catalyst.Network.NetworkUtil;
 import com.thecatalyst.catalyst.Network.RetrofitClient;
 import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
@@ -106,33 +105,33 @@ public class CompletedFragment extends Fragment {
     }
 
     private void showImage() {
-        String status =   NetworkUtil.getConnectivityStatusString(getActivity());
-        Log.e("TAG", "showImage: "+status );
-        if (status.equals("Wifi enabled") || status.equals("Mobile data enabled")) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setIcon(R.drawable.images)
-                    .setCancelable(false)
-                    .setTitle("No Response!")
-                    .setMessage("NO Response From Server.!!" + "   " +
-                            "Please Try Again!")
-                    .setPositiveButton("RETRY", (dialog, which) -> {
-                        loadRefreshData();
-                        dialog.dismiss();
-                    })
-                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setIcon(R.drawable.images)
-                    .setCancelable(false)
-                    .setTitle("No Connection!")
-                    .setMessage("NOT Connected to Internet.!!" + "   " +
-                            "Please Try Again!")
-                    .setPositiveButton("RETRY", (dialog, which) -> {
-                        loadRefreshData();
-                        dialog.dismiss();
-                    })
-                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
-        }
+//
+//        Log.e("TAG", "showImage: "+status );
+//        if (status.equals("Wifi enabled") || status.equals("Mobile data enabled")) {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//            builder.setIcon(R.drawable.images)
+//                    .setCancelable(false)
+//                    .setTitle("No Response!")
+//                    .setMessage("NO Response From Server.!!" + "   " +
+//                            "Please Try Again!")
+//                    .setPositiveButton("RETRY", (dialog, which) -> {
+//                        loadRefreshData();
+//                        dialog.dismiss();
+//                    })
+//                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
+//        } else {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//            builder.setIcon(R.drawable.images)
+//                    .setCancelable(false)
+//                    .setTitle("No Connection!")
+//                    .setMessage("NOT Connected to Internet.!!" + "   " +
+//                            "Please Try Again!")
+//                    .setPositiveButton("RETRY", (dialog, which) -> {
+//                        loadRefreshData();
+//                        dialog.dismiss();
+//                    })
+//                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
+//        }
     }
 
     private void loadDataList(List<Datum> usersList) {

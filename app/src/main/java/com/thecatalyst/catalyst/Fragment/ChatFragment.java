@@ -2,10 +2,11 @@ package com.thecatalyst.catalyst.Fragment;
 
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,12 +17,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.thecatalyst.catalyst.Adapter.ChatAdapter;
+import com.thecatalyst.catalyst.Adapter.MessageAdapter;
 import com.thecatalyst.catalyst.Adapter.MyAdapter;
 import com.thecatalyst.catalyst.Model.Datum;
 import com.thecatalyst.catalyst.Model.RetroUsers;
 import com.thecatalyst.catalyst.Network.RetrofitClient;
 import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
+import com.thecatalyst.catalyst.Util.MyDividerItemDecoration;
 
 import java.util.List;
 
@@ -34,40 +38,36 @@ import retrofit2.Response;
 import static com.thecatalyst.catalyst.R.color.white;
 
 
-public class CurrentFragment extends Fragment {
+public class ChatFragment extends Fragment {
 
-    @BindView(R.id.recycler_child)
+    @BindView(R.id.chat_recycler_view_main)
     RecyclerView recyclerViewchild;
-    @BindView(R.id.recycler)
-    RecyclerView recyclerView;
 
     private RecyclerView myRecyclerView;
     private ShimmerFrameLayout shimmerFrameLayout;
     private int completedrunning = 0;
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
-
-    public CurrentFragment() {
+    public ChatFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
     }
 
     @SuppressLint("ResourceType")
-    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        myRecyclerView = view.findViewById(R.id.recycler);
+        myRecyclerView = view.findViewById(R.id.chat_recycler_view_main);
         mWaveSwipeRefreshLayout = view.findViewById(R.id.swipe);
         mWaveSwipeRefreshLayout.setOnRefreshListener(this::loadRefreshData);
-       mWaveSwipeRefreshLayout.setWaveRGBColor(111,116,221);
-       mWaveSwipeRefreshLayout.setColorSchemeResources(white);
+        mWaveSwipeRefreshLayout.setWaveRGBColor(111,116,221);
+        mWaveSwipeRefreshLayout.setColorSchemeResources(white);
 
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view);
         shimmerFrameLayout.startShimmerAnimation();
@@ -95,16 +95,12 @@ public class CurrentFragment extends Fragment {
                 }
             }
         });
-
     }
-
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_current, container, false);
+        return inflater.inflate(R.layout.fragment_chat, container, false);
     }
-
 
     private void showImage() {
 //
@@ -139,10 +135,12 @@ public class CurrentFragment extends Fragment {
 
     private void loadDataList(List<Datum> usersList) {
 
-        MyAdapter myAdapter = new MyAdapter(usersList, getActivity());
+        ChatAdapter myAdapter = new ChatAdapter(usersList, getActivity());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         myRecyclerView.setLayoutManager(layoutManager);
         myRecyclerView.setAdapter(myAdapter);
+        myRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        myRecyclerView.addItemDecoration(new MyDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL, 16));
         myAdapter.notifyDataSetChanged();
 
     }

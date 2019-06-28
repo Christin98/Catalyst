@@ -12,4 +12,5 @@
     <color name="blue">#483d8b</color>
     <color name="blue_final">#1919FF</color>
     <color name="placeholder_bg">#dddddd</color>
+    <color name="note_list_text">#232323</color>
 </resources>
