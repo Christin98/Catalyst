@@ -1,30 +1,28 @@
 package com.thecatalyst.catalyst.Activity;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.os.Build;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-import android.os.Vibrator;
+
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,47 +33,46 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.thecatalyst.catalyst.Model.Login;
 import com.thecatalyst.catalyst.Network.RetrofitClient;
 import com.thecatalyst.catalyst.R;
-import com.thecatalyst.catalyst.Service.ConnectivityReceiver;
 import com.thecatalyst.catalyst.Service.GetData;
-import com.thecatalyst.catalyst.Service.NetworkSchedulerService;
 
-import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginActivity extends AppCompatActivity   {
+public class LoginActivity extends AppCompatActivity {
 
     TextInputEditText email,password;
     TextInputLayout email_text, password_text;
     TextView login_title;
     ImageView logo;
     CardView login_card;
+    public static int TYPE_WIFI = 1;
+    public static int TYPE_MOBILE = 2;
+    public static int TYPE_NOT_CONNECTED = 0;
+    private Snackbar snackbar;
+    private CoordinatorLayout coordinatorLayout;
+    private boolean internetConnected=true;
     SharedPreferences sp;
-    CircularProgressButton lgn;
-    MediaPlayer login_tap;
-    MediaPlayer login_done;
-    Vibrator vibrator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sp = getSharedPreferences("login",MODE_PRIVATE);
-        login_tap = MediaPlayer.create(this,R.raw.space);
-        login_done = MediaPlayer.create(this,R.raw.login_success);
-        vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+
         Handler h = new Handler();
 
         email = findViewById(R.id.login_username);
         email_text = findViewById(R.id.loginTextInputLayoutuser);
         password = findViewById(R.id.login_password);
+        coordinatorLayout = findViewById(R.id.loginlayout);
         password_text = findViewById(R.id.loginTextInputLayoutpass);
         logo = findViewById(R.id.logo);
-        login_card = findViewById(R.id.card_login);
         login_title = findViewById(R.id.login_text);
-        lgn = findViewById(R.id.progressbtn);
-
+        login_card = findViewById(R.id.login_card);
+        Button lgn = findViewById(R.id.login_button);
 
         h.postDelayed(() -> {
             email.setFocusable(true);
@@ -104,83 +101,30 @@ public class LoginActivity extends AppCompatActivity   {
             startActivity(intent);
             finish();
         }
-        checkConnection();
-        scheduleJob();
-        lgn.setEnabled(false);
-        if (checkConnection()) {
-            lgn.setEnabled(true);
-            lgn.setOnClickListener(v -> {
 
-                String user = email.getText().toString();
-                String passw = password.getText().toString();
-                login_tap.start();
-                if (validateLogin(user, passw)) {
-                    lgn.startAnimation();
-                    lgn.postDelayed(() -> doLogin(user, passw), 1000);
-                    email.setEnabled(false);
-                    password.setEnabled(false);
-                }
-            });
-        }
+        lgn.setOnClickListener(v -> {
+            String user = email.getText().toString();
+            String passw = password.getText().toString();
+            if (validateLogin(user,passw)){
+                doLogin(user,passw);
+
+            }
+        });
     }
 
-    private boolean checkConnection() {
-        boolean isConnected = ConnectivityReceiver.isConnected(getApplicationContext());
-        showSnack(isConnected);
-        return isConnected;
-    }
-
-    private void showSnack(boolean isConnected) {
-        String message;
-        int color;
-        if (isConnected) {
-            message = "Good! Connected to Internet";
-            color = Color.GREEN;
-        } else {
-            message = "Sorry! Not connected to internet";
-            color = Color.RED;
-        }
-
-        Snackbar snackbar = Snackbar
-                .make(findViewById(R.id.loginlayout), message, Snackbar.LENGTH_LONG);
-
-        View sbView = snackbar.getView();
-        TextView textView = sbView.findViewById(R.id
-                .snackbar_text);
-        textView.setTextColor(color);
-        snackbar.show();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void scheduleJob() {
-        JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
-                .setRequiresCharging(true)
-                .setMinimumLatency(1000)
-                .setOverrideDeadline(2000)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .build();
-
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(myJob);
-    }
-
-    private boolean validateLogin(String username, String passwor){
+    private boolean validateLogin(String username, String password){
         if(username == null || username.trim().length() == 0){
             Toast.makeText(this, "Username is required", Toast.LENGTH_SHORT).show();
-            email.setError("Username is required" ,getResources().getDrawable(R.drawable.icon_error));
             return false;
         }
-        if(passwor == null || passwor.trim().length() == 0){
+        if(password == null || password.trim().length() == 0){
             Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
-            password.setError("Password is required",getResources().getDrawable(R.drawable.icon_error));
             return false;
         }
         return true;
     }
 
     private void doLogin(final String user,final String pass){
-        Log.e("TAG", "CLICKED: " );
 
         GetData service = RetrofitClient.getRetrofitInstance().create(GetData.class);
 
@@ -196,59 +140,29 @@ public class LoginActivity extends AppCompatActivity   {
                 Log.e("TAG", "onResponseStaus:"+status);
                 Log.e("TAG", "onResponseStaus:"+message);
                 if (status.equals("success") || message.equals("logged in!")){
-                            lgn.doneLoadingAnimation(Color.parseColor("#009900"),BitmapFactory.decodeResource(getResources(),R.drawable.ic_ok_48));
-                            toNextPage();
-                            login_done.start();
-                            Handler handler = new Handler();
-                            handler.postDelayed(() -> {
-                            Intent intent = new Intent(LoginActivity.this,TaskScreenActivity.class);
-                            startActivity(intent);
-                       },1000);
+
+                        Intent intent = new Intent(LoginActivity.this,TaskScreenActivity.class);
+                        startActivity(intent);
                     sp.edit().putBoolean("logged",true).apply();
                     sp.edit().putString("Username",user).apply();
                     sp.edit().putString("Password",pass).apply();
                     finish();
                 }else if (status.equals("error") || message.equals("incorrect password")){
-                    vibrator.vibrate((long)500);
                     password.setError(message,getResources().getDrawable(R.drawable.icon_error));
-                    Handler handler = new Handler();
-                    lgn.doneLoadingAnimation(Color.parseColor("#ff0000"), BitmapFactory.decodeResource(getResources(),R.drawable.ic_cancel_48));
-                    handler.postDelayed(() -> lgn.revertAnimation(),1000);
-                    email.setEnabled(true);
-                    password.setEnabled(true);
                     sp.edit().putBoolean("logged",false).apply();
                 }
+
             }
 
             @Override
             public void onFailure(@NonNull Call<Login> call, @NonNull Throwable t) {
-                lgn.doneLoadingAnimation(Color.parseColor("#ff0000"), BitmapFactory.decodeResource(getResources(),R.drawable.ic_cancel_48));
-                Handler handler = new Handler();
-                vibrator.vibrate((long)500);
-                handler.postDelayed(() -> lgn.revertAnimation(),1000);
-                email.setEnabled(true);
-                password.setEnabled(true);
-                Log.e("TAG", "onFailure: "+t );
+
             }
         });
-    }
 
-    public void toNextPage(){
 
-    }
+            }
 
-    @Override
-    protected void onStop() {
-        stopService(new Intent(this, NetworkSchedulerService.class));
-        super.onStop();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Intent startServiceIntent = new Intent(this, NetworkSchedulerService.class);
-        startService(startServiceIntent);
-    }
 
     @Override
     protected void onResume() {

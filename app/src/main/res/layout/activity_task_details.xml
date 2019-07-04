@@ -12,7 +12,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="7dp">
+        <TextView
+            android:id="@+id/project_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/project_name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:padding="6dp"
+            android:gravity="left"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/task_lay_project"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:background="#000000">
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,11 +46,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:text="Start Date :"
             android:layout_weight="1"
-            android:textColor="@color/grey"
-            android:gravity="left"
+            android:textColor="#000000"
+            android:gravity="center"
             android:textStyle="bold"
             />
 
@@ -38,7 +62,7 @@
             android:textColor="#000000"
             android:textStyle="bold"
             android:layout_weight="1"
-            android:gravity="right"
+            android:gravity="center"
             android:text=" "
             android:maxLength="10"
             />
@@ -53,11 +77,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:text="End Date :"
             android:layout_weight="1"
-            android:textColor="@color/grey"
-            android:gravity="left"
+            android:textColor="#000000"
+            android:gravity="center"
             android:textStyle="bold"
             />
 
@@ -67,7 +91,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:layout_weight="1"
-            android:gravity="right"
+            android:gravity="center"
             android:textColor="#000000"
             android:textStyle="bold"
             android:text=" "
@@ -83,11 +107,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:text="Remaining Days :"
             android:layout_weight="1"
-            android:textColor="@color/grey"
-            android:gravity="left"
+            android:textColor="#000000"
+            android:gravity="center"
             android:textStyle="bold"
             />
 
@@ -97,7 +121,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:layout_weight="1"
-            android:gravity="right"
+            android:gravity="center"
             android:textColor="#000000"
             android:textStyle="bold"
             android:text=" "
@@ -111,30 +135,14 @@
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
-        android:background="@color/blue_final">
+        android:background="#000000">
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:text="Technology"/>
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:text="Members"/>
-        </LinearLayout>
+        android:orientation="horizontal">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -164,7 +172,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
-        android:background="@color/blue_final">
+        android:background="#000000">
     </LinearLayout>
 
     <LinearLayout
@@ -177,10 +185,10 @@
             android:layout_height="wrap_content"
             android:lines="1"
             android:text="Details"
-            android:textSize="15sp"
-            android:textColor="@color/grey"
+            android:textSize="18sp"
+            android:textColor="#000000"
             android:textStyle="bold"
-            android:gravity="left"
+            android:gravity="center"
             />
         <TextView
             android:id="@+id/detailtv"
@@ -196,23 +204,19 @@
     <LinearLayout
         android:id="@+id/task_lay_details"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="2dp"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
-        android:background="@color/blue_final">
+        android:background="#000000">
     </LinearLayout>
-
+<CalendarView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <com.molo17.customizablecalendar.library.components.CustomizableCalendar
-        android:id="@+id/view_month"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout="@layout/c_calender"
-        android:layout_marginTop="-25dp"
-        android:layout_marginBottom="-10dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -226,7 +230,7 @@
         android:layout_gravity="center_horizontal"
         app:cardElevation="8dp"
         app:cardCornerRadius="24dp"
-        app:cardBackgroundColor="@color/blue_final"
+        app:cardBackgroundColor="@color/colorAccent"
         android:layout_margin="10dp">
         <Button
             android:background="@drawable/ripple_white"
@@ -236,7 +240,7 @@
             android:textColor="@color/white"
             android:textStyle="italic"
             android:textSize="15sp"
-            android:text="@string/submit"
+            android:text="@string/submit_project"
             android:ems="15"
             android:textAllCaps="true" />
     </androidx.cardview.widget.CardView>

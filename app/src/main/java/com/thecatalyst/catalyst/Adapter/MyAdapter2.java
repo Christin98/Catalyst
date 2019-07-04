@@ -2,6 +2,7 @@ package com.thecatalyst.catalyst.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -12,11 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thecatalyst.catalyst.Activity.TaskDetailsActivity;
-import com.thecatalyst.catalyst.Model.Child;
 import com.thecatalyst.catalyst.R;
+import com.thecatalyst.catalyst.Model.Task;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -31,7 +33,7 @@ import java.util.Random;
 
 
 public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.MyViewHolder> {
-    private List<Child> dataList;
+    private List<Task> dataList;
 //    private boolean fabstate = false;
 
     private Date cd = Calendar.getInstance().getTime();
@@ -41,7 +43,7 @@ public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.MyViewHolder> {
 
     private Context context;
 
-    MyAdapter2(List<Child> dataList , Context context){
+    MyAdapter2(List<Task> dataList , Context context){
         this.dataList = dataList;
         this.context = context;
     }
@@ -55,7 +57,6 @@ public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.MyViewHolder> {
         TextView textEndDate;
         ImageView arrow_img_child;
         CardView card_child;
-        RecyclerView recycler_child1;
         TextView textRemainingDays;
 
 
@@ -68,7 +69,6 @@ public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.MyViewHolder> {
             textEndDate = myView.findViewById(R.id.end_Datec);
             arrow_img_child = myView.findViewById(R.id.arrow_imgc);
             card_child = myView.findViewById(R.id.cardc);
-            recycler_child1 = myView.findViewById(R.id.recycler_child1);
             textRemainingDays = myView.findViewById(R.id.remaing_Daysc);
 
         }
@@ -105,11 +105,6 @@ public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.MyViewHolder> {
         holder.textEndDate.setText(dataList.get(position).getEndDate());
 
         Log.e("TAG", "DATA LIST ADAPTER: "+dataList.toString() );
-        MyAdapter2 adapter = new MyAdapter2(dataList.get(position).getChildren(),context);
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
-        holder.recycler_child1.setLayoutManager(layoutManager);
-        holder.recycler_child1.setAdapter(adapter);
 
         holder.arrow_img_child.setOnClickListener(v -> {
                     Intent intent = new Intent(context, TaskDetailsActivity.class);
@@ -119,15 +114,10 @@ public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.MyViewHolder> {
                     intent.putExtra("Rem",MessageFormat.format("{0}days",Days.daysBetween(datel,date).getDays()));
                     intent.putExtra("Details",dataList.get(position).getDetails());
                     intent.putExtra("Id",dataList.get(position).getId());
-                    intent.putExtra("Members",dataList.get(position).getAllTeamMembers());
-                    intent.putExtra("Technology",dataList.get(position).getAllTechnology());
                     context.startActivity(intent);
                 }
         );
-        adapter.notifyDataSetChanged();
-        holder.recycler_child1.setVisibility(View.GONE);
 
-        holder.card_child.setOnClickListener(v -> holder.recycler_child1.setVisibility(View.VISIBLE));
     }
 
     @Override

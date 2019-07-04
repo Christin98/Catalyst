@@ -8,12 +8,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -22,50 +16,37 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning"
-        tools:targetApi="m">
-        <activity android:name=".Activity.ChatActivity"
-            tools:ignore="InnerclassSeparator"
-            android:parentActivityName=".Activity.TaskScreenActivity" >
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activity.TaskScreenActivity" />
-        </activity>
+        tools:ignore="GoogleAppIndexingWarning">
+        <receiver
+            android:name=".Service.NetworkChangeReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="NetworkChangeRecevier">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".Activity.TaskDetailsActivity"
             android:label="Details"
             android:theme="@style/Theme.AppCompat.Light.Dialog"
             tools:ignore="InnerclassSeparator" />
-        <activity
-            android:name=".Activity.TaskScreenActivity"
-            tools:ignore="InnerclassSeparator" />
+        <activity android:name=".Activity.TaskScreenActivity" />
         <activity
             android:name=".Activity.LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme"
-            tools:ignore="InnerclassSeparator" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Activity.MainActivity"
-            android:theme="@style/AppTheme.Fullscreen"
-            tools:ignore="InnerclassSeparator">
+            android:theme="@style/AppTheme.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".Service.NetworkSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            tools:ignore="InnerclassSeparator" />
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="fb8fcb4b620eaa19ce6628f9dd949b9af4e7b402" />
     </application>
 
 </manifest>

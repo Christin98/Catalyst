@@ -10,54 +10,49 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.molo17.customizablecalendar.library.components.CustomizableCalendar;
-import com.molo17.customizablecalendar.library.interactors.AUCalendar;
-import com.molo17.customizablecalendar.library.model.Calendar;
-import com.thecatalyst.catalyst.Adapter.CalendarViewInteractor;
-import com.thecatalyst.catalyst.Interpolator.MyBounceInterpolator;
+import com.thecatalyst.catalyst.Model.RetroUsers;
+import com.thecatalyst.catalyst.Model.Technology;
+import com.thecatalyst.catalyst.Network.RetrofitClient;
 import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
 
-import org.joda.time.DateTime;
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import io.reactivex.disposables.CompositeDisposable;
-
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TaskDetailsActivity extends AppCompatActivity {
     AlertDialog builder;
-    @BindView(R.id.view_month)
-    CustomizableCalendar customizableCalendar;
-    final com.molo17.customizablecalendar.library.model.Calendar calendar = null;
-    public boolean multipleSelection=false;
-    private CompositeDisposable subscriptions;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_details);
-//        TextView pro_name = findViewById(R.id.project_name);
+        TextView pro_name = findViewById(R.id.project_name);
         TextView startd = findViewById(R.id.startd);
         TextView endd = findViewById(R.id.endd);
         TextView remday = findViewById(R.id.remd);
         TextView detail = findViewById(R.id.detailtv);
-//        LinearLayout task_project = findViewById(R.id.task_lay_project);
+        LinearLayout task_project = findViewById(R.id.task_lay_project);
         LinearLayout task_date = findViewById(R.id.task_lay_date);
         LinearLayout task_mem = findViewById(R.id.task_lay_mem);
         LinearLayout task_details = findViewById(R.id.task_lay_details);
@@ -69,6 +64,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         Date date;
         Date date1;
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
+
+
 
         Intent intent = getIntent();
 
@@ -78,21 +77,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
         String remdy = intent.getStringExtra("Rem");
         String details = intent.getStringExtra("Details");
         int index = intent.getIntExtra("Index", 0);
-        String s1 = intent.getStringExtra("Members");
-        String s2 = intent.getStringExtra("Technology");
-        DateTime st = DateTime.parse(startdt);
-        DateTime en = DateTime.parse(enddt);
-        Log.e("TAG", "onCreateDATE: "+DateTime.parse(enddt) );
-        Log.e("TAG", "onCreateS1MEMBERS: "+s1 );
-        Log.e("TAG", "onCreateS2TECHNOLOGY: "+s2 );
 
-        ButterKnife.bind(this);
-        subscriptions = new CompositeDisposable();
-        updateData(st,en);
-
-
-
-        button.setOnClickListener(v -> { builder = new AlertDialog.Builder(TaskDetailsActivity.this)
+        button.setOnClickListener(v -> builder = new AlertDialog.Builder(TaskDetailsActivity.this)
                 .setCancelable(false)
                 .setMessage("Are You sure?")
                 .setTitle("Submit Project")
@@ -101,59 +87,43 @@ public class TaskDetailsActivity extends AppCompatActivity {
                     Toast.makeText(TaskDetailsActivity.this,"Submitted",Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("No", (dialog, which) -> dialog.cancel())
-        .show();
-        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.bounce);
-        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.2, 20);
-        myAnim.setInterpolator(interpolator);
-        button.startAnimation(myAnim);});
+        .show());
 
 
         tech = new ArrayList<>();
         tmember = new ArrayList<>();
 
-            String[] s = s1 != null ? s1.split(",") : new String[0];
-            String[] st1 = s2 != null ? s2.split(",") : new String[0];
+        GetData service = RetrofitClient.getRetrofitInstance().create(GetData.class);
 
+        Call<RetroUsers> call = service.getApk(0);
 
-                Log.e("TAG", "onResponseLength: "+ s.length);
-                Log.e("TAG", "onResponseLength: "+st1.length);
+        call.enqueue(new Callback<RetroUsers>() {
 
-                for (String s4 : s) {
-                    tech.add(s4);
-                    Log.e("TAG", "onResponseMem: " + s4);
-                }
-
-                for (String s3 : st1) {
-                    tmember.add(s3);
-                    Log.e("TAG", "onResponseTech: " + s3);
-                }
-
+            @Override
+            public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
+                assert response.body() != null;
+                String s1 = response.body().getData().get(index).getAllTeamMembers();
+                String s2 = response.body().getData().get(index).getAllTechnology();
+                String[] s = s1.split(",");
+                String[] st = s2.split(",");
+                tech.addAll(Arrays.asList(s).subList(0, s.length + 1));
+                tmember.addAll(Arrays.asList(st).subList(0,st.length + 1));
                 techSp.setAdapter(new ArrayAdapter<>(TaskDetailsActivity.this, android.R.layout.simple_spinner_dropdown_item, tech));
                 memberSp.setAdapter(new ArrayAdapter<>(TaskDetailsActivity.this, android.R.layout.simple_spinner_dropdown_item, tmember));
+            }
 
+            @Override
+            public void onFailure(@NonNull Call<RetroUsers> call, @NonNull Throwable throwable) {
+                Toast.makeText(TaskDetailsActivity.this, "Error to load Member List", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         techSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String techname = techSp.getItemAtPosition(techSp.getSelectedItemPosition()).toString();
-                Toast.makeText(getApplicationContext(), techname, Toast.LENGTH_SHORT).show();
+                String country= techSp.getItemAtPosition(techSp.getSelectedItemPosition()).toString();
+                Toast.makeText(getApplicationContext(),country,Toast.LENGTH_LONG).show();
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        memberSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String membername = memberSp.getItemAtPosition(memberSp.getSelectedItemPosition()).toString();
-                Toast.makeText(getApplicationContext(), membername, Toast.LENGTH_SHORT).show();
-            }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -161,37 +131,15 @@ public class TaskDetailsActivity extends AppCompatActivity {
         });
 
 
-//        pro_name.setText(name);
+        pro_name.setText(name);
         startd.setText(startdt);
         endd.setText(enddt);
         remday.setText(remdy);
         detail.setText(details);
+//        task_project.setBackgroundColor(Color.parseColor("#"+color));
+//        task_date.setBackgroundColor(Color.parseColor("#"+color));
+//        task_mem.setBackgroundColor(Color.parseColor("#"+color));
+//        task_details.setBackgroundColor(Color.parseColor("#"+color));
 
     }
-
-    private void updateData(DateTime st, DateTime en) {
-
-        DateTime firstMonth = st.withDayOfMonth(1);
-        DateTime lastMonth = en.plusMonths(3).withDayOfMonth(1);
-        Log.e("TAG", "updateData: "+firstMonth );
-
-        final com.molo17.customizablecalendar.library.model.Calendar calendar = new Calendar(firstMonth, lastMonth);
-
-
-            calendar.setFirstSelectedDay(st.minusDays(1));
-               calendar.setLastSelectedDay(en);
-        calendar.setMultipleSelection(true);
-
-        final CalendarViewInteractor calendarViewInteractor = new CalendarViewInteractor(getBaseContext());
-        AUCalendar auCalendar = AUCalendar.getInstance(calendar);
-        calendarViewInteractor.updateCalendar(calendar);
-        subscriptions.add(
-                auCalendar.observeChangesOnCalendar()
-                .subscribe()
-        );
-
-        customizableCalendar.injectViewInteractor(calendarViewInteractor);
-
-    }
-
 }

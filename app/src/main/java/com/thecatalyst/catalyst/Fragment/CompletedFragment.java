@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,11 +20,13 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.thecatalyst.catalyst.Adapter.MyAdapter;
 import com.thecatalyst.catalyst.Model.Datum;
 import com.thecatalyst.catalyst.Model.RetroUsers;
+import com.thecatalyst.catalyst.Network.NetworkUtil;
 import com.thecatalyst.catalyst.Network.RetrofitClient;
 import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
+import com.thecatalyst.catalyst.Service.NetworkChangeReceiver;
 
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,17 +38,16 @@ import retrofit2.Response;
 
 public class CompletedFragment extends Fragment {
 
-    @Nullable
     @BindView(R.id.recycler_child)
     RecyclerView recyclerViewchild;
-    @Nullable
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
     private int index;
 
     private RecyclerView myRecyclerView;
     private ShimmerFrameLayout shimmerFrameLayout;
-    final private int completec = 0;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    int completec = 0;
 
 
     public CompletedFragment() {
@@ -66,6 +66,13 @@ public class CompletedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         myRecyclerView = view.findViewById(R.id.recycler);
+        swipeRefreshLayout =  view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(this::loadRefreshData);
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view);
         shimmerFrameLayout.startShimmerAnimation();
 
@@ -77,7 +84,6 @@ public class CompletedFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
-                assert response.body() != null;
                 loadDataList(response.body().getData());
                 index = getId();
                 Log.e("TAG", "onResponse: "+index );
@@ -105,48 +111,39 @@ public class CompletedFragment extends Fragment {
     }
 
     private void showImage() {
-//
-//        Log.e("TAG", "showImage: "+status );
-//        if (status.equals("Wifi enabled") || status.equals("Mobile data enabled")) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//            builder.setIcon(R.drawable.images)
-//                    .setCancelable(false)
-//                    .setTitle("No Response!")
-//                    .setMessage("NO Response From Server.!!" + "   " +
-//                            "Please Try Again!")
-//                    .setPositiveButton("RETRY", (dialog, which) -> {
-//                        loadRefreshData();
-//                        dialog.dismiss();
-//                    })
-//                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
-//        } else {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//            builder.setIcon(R.drawable.images)
-//                    .setCancelable(false)
-//                    .setTitle("No Connection!")
-//                    .setMessage("NOT Connected to Internet.!!" + "   " +
-//                            "Please Try Again!")
-//                    .setPositiveButton("RETRY", (dialog, which) -> {
-//                        loadRefreshData();
-//                        dialog.dismiss();
-//                    })
-//                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
-//        }
+        String status =   NetworkUtil.getConnectivityStatusString(getContext());
+        Log.e("TAG", "showImage: "+status );
+        if (status.equals("Wifi enabled") || status.equals("Mobile data enabled")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setIcon(R.drawable.images)
+                    .setCancelable(false)
+                    .setTitle("No Response!")
+                    .setMessage("NO Response From Server.!!" + "   " +
+                            "Please Try Again!")
+                    .setPositiveButton("RETRY", (dialog, which) -> {
+                        loadRefreshData();
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setIcon(R.drawable.images)
+                    .setCancelable(false)
+                    .setTitle("No Connection!")
+                    .setMessage("NOT Connected to Internet.!!" + "   " +
+                            "Please Try Again!")
+                    .setPositiveButton("RETRY", (dialog, which) -> {
+                        loadRefreshData();
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
+        }
     }
 
     private void loadDataList(List<Datum> usersList) {
 
         MyAdapter myAdapter = new MyAdapter(usersList,getActivity());
 
-        Collections.sort(usersList, (o1, o2) -> {
-            if (o1.getId() > o2.getId()){
-                return -1;
-            }else if (o1.getId().equals(o2.getId())){
-                return 0;
-            }else {
-                return 1;
-            }
-        });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         myRecyclerView.setLayoutManager(layoutManager);
         myRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), LinearLayoutManager.VERTICAL));
@@ -154,8 +151,6 @@ public class CompletedFragment extends Fragment {
         myAdapter.notifyDataSetChanged();
 
     }
-
-
 
     private void loadRefreshData()
     {
@@ -167,14 +162,15 @@ public class CompletedFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
-                assert response.body() != null;
                 loadDataList(response.body().getData());
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(@NonNull Call<RetroUsers> call, @NonNull Throwable throwable) {
+                swipeRefreshLayout.setRefreshing(false);
                 showImage();
                 Log.e("TAG", "onFailure: "+throwable.getMessage() );
                 if (getActivity() != null) {

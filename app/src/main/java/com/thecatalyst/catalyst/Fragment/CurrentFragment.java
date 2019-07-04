@@ -1,11 +1,12 @@
 package com.thecatalyst.catalyst.Fragment;
 
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,19 +20,20 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.thecatalyst.catalyst.Adapter.MyAdapter;
 import com.thecatalyst.catalyst.Model.Datum;
 import com.thecatalyst.catalyst.Model.RetroUsers;
+import com.thecatalyst.catalyst.Network.NetworkUtil;
 import com.thecatalyst.catalyst.Network.RetrofitClient;
 import com.thecatalyst.catalyst.R;
 import com.thecatalyst.catalyst.Service.GetData;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.zip.DataFormatException;
 
 import butterknife.BindView;
-import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.thecatalyst.catalyst.R.color.white;
 
 
 public class CurrentFragment extends Fragment {
@@ -43,8 +45,8 @@ public class CurrentFragment extends Fragment {
 
     private RecyclerView myRecyclerView;
     private ShimmerFrameLayout shimmerFrameLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private int completedrunning = 0;
-    private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
 
     public CurrentFragment() {
@@ -59,15 +61,16 @@ public class CurrentFragment extends Fragment {
 
     }
 
-    @SuppressLint("ResourceType")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         myRecyclerView = view.findViewById(R.id.recycler);
-        mWaveSwipeRefreshLayout = view.findViewById(R.id.swipe);
-        mWaveSwipeRefreshLayout.setOnRefreshListener(this::loadRefreshData);
-       mWaveSwipeRefreshLayout.setWaveRGBColor(111,116,221);
-       mWaveSwipeRefreshLayout.setColorSchemeResources(white);
+        swipeRefreshLayout =  view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(this::loadRefreshData);
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view);
         shimmerFrameLayout.startShimmerAnimation();
@@ -80,7 +83,6 @@ public class CurrentFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
-                assert response.body() != null;
                 loadDataList(response.body().getData());
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
@@ -102,39 +104,39 @@ public class CurrentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_current, container, false);
     }
 
-
     private void showImage() {
-//
-//        Log.e("TAG", "showImage: "+status );
-//        if (status.equals("Wifi enabled") || status.equals("Mobile data enabled")) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//            builder.setIcon(R.drawable.images)
-//                    .setCancelable(false)
-//                    .setTitle("No Response!")
-//                    .setMessage("NO Response From Server.!!" + "   " +
-//                            "Please Try Again!")
-//                    .setPositiveButton("RETRY", (dialog, which) -> {
-//                        loadRefreshData();
-//                        dialog.dismiss();
-//                    })
-//                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
-//        } else {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//            builder.setIcon(R.drawable.images)
-//                    .setCancelable(false)
-//                    .setTitle("No Connection!")
-//                    .setMessage("NOT Connected to Internet.!!" + "   " +
-//                            "Please Try Again!")
-//                    .setPositiveButton("RETRY", (dialog, which) -> {
-//                        loadRefreshData();
-//                        dialog.dismiss();
-//                    })
-//                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss()))
-//                    .show();
-//        }
+        String status =   NetworkUtil.getConnectivityStatusString(getContext());
+        Log.e("TAG", "showImage: "+status );
+        if (status.equals("Wifi enabled") || status.equals("Mobile data enabled")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setIcon(R.drawable.images)
+                    .setCancelable(false)
+                    .setTitle("No Response!")
+                    .setMessage("NO Response From Server.!!" + "   " +
+                            "Please Try Again!")
+                    .setPositiveButton("RETRY", (dialog, which) -> {
+                        loadRefreshData();
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss())).show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setIcon(R.drawable.images)
+                    .setCancelable(false)
+                    .setTitle("No Connection!")
+                    .setMessage("NOT Connected to Internet.!!" + "   " +
+                            "Please Try Again!")
+                    .setPositiveButton("RETRY", (dialog, which) -> {
+                        loadRefreshData();
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton("CANCEL", ((dialog, which) -> dialog.dismiss()))
+                    .show();
+        }
     }
 
     private void loadDataList(List<Datum> usersList) {
@@ -142,6 +144,7 @@ public class CurrentFragment extends Fragment {
         MyAdapter myAdapter = new MyAdapter(usersList, getActivity());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         myRecyclerView.setLayoutManager(layoutManager);
+        myRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getActivity()), LinearLayoutManager.VERTICAL));
         myRecyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
 
@@ -157,17 +160,16 @@ public class CurrentFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call<RetroUsers> call, @NonNull Response<RetroUsers> response) {
-                assert response.body() != null;
                 loadDataList(response.body().getData());
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                mWaveSwipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(@NonNull Call<RetroUsers> call, @NonNull Throwable throwable) {
+                swipeRefreshLayout.setRefreshing(false);
                 Log.e("TAG", "onFailure: "+ throwable.getMessage() );
-                mWaveSwipeRefreshLayout.setRefreshing(false);
                 showImage();
                 if (getActivity() != null) {
                     Toast.makeText(getContext(), "Unable to load data", Toast.LENGTH_SHORT).show();
